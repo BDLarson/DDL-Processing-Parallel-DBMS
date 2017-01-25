@@ -7,7 +7,7 @@
 #
 # $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 #
-# Install vagrant:
+# Install virtualbox & vagrant:
 # $ brew cask install virtualbox
 # $ brew cask install vagrant
 # $ brew cask install vagrant-manager
