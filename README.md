@@ -4,56 +4,55 @@ Implementation of the DDL processing component of a parallel SQL processing syst
 
 LOCAL MACHINE (macOS)
 
-Install Homebrew:
+Install Homebrew:<br />
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-Install virtualbox & vagrant:
-$ brew cask install virtualbox
-$ brew cask install vagrant
-$ brew cask install vagrant-manager
+Install virtualbox & vagrant:<br />
+$ brew cask install virtualbox<br />
+$ brew cask install vagrant<br />
+$ brew cask install vagrant-manager<br />
 
 LOCAL MACHINE (Linux)
 
-Install virtualbox & vagrant
-#
-$ sudo apt install virtualbox
-$ sudo apt install vagrant
-$ sudo apt install vagrant-manager
+Install virtualbox & vagrant:<br />
+$ sudo apt install virtualbox<br />
+$ sudo apt install vagrant<br />
+$ sudo apt install vagrant-manager<br />
 
-Install python3 if not already on machine (macOS):
-$ brew install python3
+Install python3 if not already on machine (macOS):<br />
+$ brew install python3<br />
 
-Install python3 if not already on machine (Linux):
-$ sudo apt install python3
+Install python3 if not already on machine (Linux):<br />
+$ sudo apt install python3<br />
 
-Install PyMySQL if not already on machine:
-$ pip3 install PyMySQL
+Install PyMySQL if not already on machine:<br />
+$ pip3 install PyMySQL<br />
 
-Create a Directory for the Catalog and each Node:
-$ mkdir catalog
-$ mkdir node1
-$ mkdir node2
+Create a Directory for the Catalog and each Node:<br />
+$ mkdir catalog<br />
+$ mkdir node1<br />
+$ mkdir node2<br />
 
-Initialize a virtual machine in each directory:
-$ vagrant init ubuntu/xenial64
-$ vagrant up
-$ vagrant ssh
+Initialize a virtual machine in each directory:<br />
+$ vagrant init ubuntu/xenial64<br />
+$ vagrant up<br />
+$ vagrant ssh<br />
 
-Change directory to /vagrant in each directory:
-$ cd /vagrant
+Change directory to /vagrant in each directory:<br />
+$ cd /vagrant<br />
 
-Install MySQL in each directory:
-$ sudo apt-get install mysql-server
-NOTE: Password for MySQL-server: password
+Install MySQL in each directory:<br />
+$ sudo apt-get install mysql-server<br />
+NOTE: Password for MySQL-server: password<br />
 
-Edit the MySQL settings in each directory:
-$ /usr/bin/mysql_secure_installation
-NOTE: Respond No to everything but Remove test database and access to it, and Reload privilege tables
+Edit the MySQL settings in each directory:<br />
+$ /usr/bin/mysql_secure_installation<br />
+NOTE: Respond No to everything but Remove test database and access to it, and Reload privilege tables<br />
 
-Create remote users in each directory:
+Create remote users in each directory:<br />
 
-Grant full access for all remote users:
+Grant full access for all remote users:<br />
 
-Create DB's in each directory:
+Create DB's in each directory:<br />
 
 
