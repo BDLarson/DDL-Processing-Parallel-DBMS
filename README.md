@@ -15,7 +15,7 @@ $ brew cask install vagrant-manager
 LOCAL MACHINE (Linux)
 
 Install virtualbox & vagrant
-$
+#
 $ sudo apt install virtualbox
 $ sudo apt install vagrant
 $ sudo apt install vagrant-manager
