@@ -1,16 +1,13 @@
-catalog.driver=PyMySQL
 catalog.hostname=192.168.10.30
 catalog.username=cataloguser
-catalog.passwd=password0
+catalog.passwd=panda
 
 numnodes=2
 
-node1.driver=PyMySQL
 node1.hostname=192.168.10.10
-node1.username=test1
-node1.passwd=password1
+node1.username=evelynb
+node1.passwd=netflix
 
-node2.driver=PyMySQL
 node2.hostname=192.168.10.20
-node2.username=test2
-node2.passwd=password2
+node2.username=blakela
+node2.passwd=hulu

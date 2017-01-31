@@ -14,7 +14,7 @@ $ brew cask install vagrant-manager
 VAGRANT VIRTUAL MACHINE
 
 Install python3 if not already on machine:
-$ sudo apt install python3
+$ brew install python3
 
 Install PyMySQL if not already on machine:
 $ pip3 install PyMySQL
@@ -26,11 +26,34 @@ $ vagrant init ubuntu/xenial64
 $ vagrant up
 $ vagrant ssh
 
-Change Directory to /vagrant in Each Directory
-$ cd /vagrant
+Open Vagrantfile in Each Directory
+Replace line 25 with:
+  config.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true
+Replace line 29 with:
+  config.vm.network "private_network", ip: "ADDRESS_VALUE"
+ADDRESS_VALUE depends on Directory:
+  /textbox2, address_value = localhost_network.20
+  /textbox1, address_value = localhost_network.10
+  /catalogbox, address_value = localhost_network.30
 
 Install MySQL in Each Directory
+$ cd /vagrant
 $ sudo apt-get install mysql-server
 Note: Password for MySQL-server: password
 $ /usr/bin/mysql_secure_installation
 Note: Respond No to everything but Remove test database and access to it, and Reload privilege tables
+
+Create Remote Users in Each Directory
+$ cd /etc/mysql/mysql.conf.d
+$ sudo vim mysqld.cnf
+Comment out BIND-ADDRESS
+$ sudo service mysql restart
+$ mysql -u root -p
+Enter password
+
+Creating Database
+mysql > create database TESTDB;
+mysql > show databases;
+mysql > use TESTDB;
+mysql > CREATE USER 'username'@'localhost_value' IDENTIFIED BY 'passwd';
+mysql > grant all on * to 'username'@'192.168.10.1';
