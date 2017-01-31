@@ -11,26 +11,48 @@ Install virtualbox & vagrant:
 $ brew cask install virtualbox
 $ brew cask install vagrant
 $ brew cask install vagrant-manager
-VAGRANT VIRTUAL MACHINE
 
-Install python3 if not already on machine:
+LOCAL MACHINE (Linux)
+
+Install virtualbox & vagrant
+$ sudo apt install virtualbox
+$ sudo apt install vagrant
+$ sudo apt install vagrant-manager
+
+Install python3 if not already on machine (macOS):
+$ brew install python3
+
+Install python3 if not already on machine (Linux):
 $ sudo apt install python3
 
 Install PyMySQL if not already on machine:
 $ pip3 install PyMySQL
 
-Create a Directory for the Catalog and Each Node
+Create a Directory for the Catalog and each Node:
+$ mkdir catalog
+$ mkdir node1
+$ mkdir node2
 
-Initialize a VirtualBox in Each Directory
+Initialize a virtual machine in each directory:
 $ vagrant init ubuntu/xenial64
 $ vagrant up
 $ vagrant ssh
 
-Change Directory to /vagrant in Each Directory
+Change directory to /vagrant in each directory:
 $ cd /vagrant
 
-Install MySQL in Each Directory
+Install MySQL in each directory:
 $ sudo apt-get install mysql-server
-Note: Password for MySQL-server: password
+NOTE: Password for MySQL-server: password
+
+Edit the MySQL settings in each directory:
 $ /usr/bin/mysql_secure_installation
-Note: Respond No to everything but Remove test database and access to it, and Reload privilege tables
+NOTE: Respond No to everything but Remove test database and access to it, and Reload privilege tables
+
+Create remote users in each directory:
+
+Grant full access for all remote users:
+
+Create DB's in each directory:
+
+
