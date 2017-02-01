@@ -104,7 +104,7 @@ class Catalog:
         createCMD = "create table dtables(tname VARCHAR(32), nodedriver VARCHAR(64), nodeurl VARCHAR(128), nodeuser VARCHAR(16), nodepasswd VARCHAR(16), partmtd INT, nodeid INT, partcol VARCHAR(32), partparam1 VARCHAR(32), partparam2 VARCHAR(32))"
         print("catalog info..........")
         self.displayCatalog()
-        connect = pymysql.connect(self.hostname, '3306', self.username, self.passwd, self.db)
+        connect = pymysql.connect(self.hostname, self.username, self.passwd, self.db)
         cur = connect.cursor()
         cur.execute(createCMD)
         print(cur.description)

@@ -26,11 +26,10 @@ $ sudo apt install virtualbox<br />
 $ sudo apt install vagrant<br />
 $ sudo apt install vagrant-manager<br />
 
-Install python3 if not already on machine (macOS):<br />
-$ brew install python3<br />
-
-Install python3 if not already on machine (Linux):<br />
+Install python3 if not already on machine:<br />
 $ sudo apt install python3<br />
+
+==========================
 
 Install PyMySQL if not already on machine:<br />
 $ pip3 install PyMySQL<br />
@@ -73,15 +72,17 @@ Note: Password for MySQL-server: password<br />
 $ /usr/bin/mysql_secure_installation<br />
 Note: Respond No to everything but Remove test database and access to it, and Reload privilege tables<br />
 
+Connect to MySQL in Each Directory:<br />
+$ mysql -u root -p;
+Enter password: 'password'
+
+Create a database in Each Directory: <br />
+NOTE: If a user already exists then drop it:<br />
+mysql> drop user 'username'<br />
+Create the database:<br />
+mysql> create database TESTDB;<br />
+
 Create Remote Users in Each Directory:<br />
-$ cd /etc/mysql/mysql.conf.d<br />
-$ sudo vim mysqld.cnf<br />
-Comment out BIND-ADDRESS<br />
-$ sudo service mysql restart<br />
-$ mysql -u root -p<br />
-Enter password<br />
-mysql > create database TESTDB;<br />
-mysql > show databases;<br />
-mysql > use TESTDB;<br />
-mysql > create user 'username'@'localhost_value' identified by 'passwd';<br />
-mysql > grant all on * to 'username'@'192.168.10.1';<br />
+mysql> use TESTDB;<br />
+mysql> create user 'username';<br />
+mysql> grant all on TESTDB.* to username@'%' identified by 'password';<br />
