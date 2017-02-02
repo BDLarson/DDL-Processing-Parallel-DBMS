@@ -29,7 +29,6 @@ def runDDL(argv):
             if line.strip():
                 temp = line.strip().split("=")
                 if temp[0].split(".")[0].find("catalog") > -1:
-                    kind = "catalog"
                     if temp[0].split(".")[1].find("driver") > -1:
                         pass
                     elif temp[0].split(".")[1].find("hostname") > -1:
@@ -46,7 +45,6 @@ def runDDL(argv):
                 elif temp[0].split(".")[0].find("numnodes") > -1:
                     pass
                 elif temp[0].split(".")[0].find("node") > -1:
-                    kind = "node"
                     if temp[0].split(".")[1].find("driver") > -1:
                         pass
                     elif temp[0].split(".")[1].find("hostname") > -1:
@@ -59,7 +57,7 @@ def runDDL(argv):
                     elif temp[0].split(".")[1].find("passwd") > -1:
                         num = num + 1
                         passwd = temp[1]
-                        nodes.append(Node(hostname, username, passwd, db, num))
+                        nodes.append(Node(hostname, username, passwd, db, num, url, port))
 
     # Reads ddlfile, Remove Whitespace, Remove new lines, Parse contents on ';'
     k = open(ddlfile, "r")
@@ -67,9 +65,19 @@ def runDDL(argv):
 
     # Run Commands from ddlfile on each Thread
     threads = []
+    table = ""
     for cmd in sqlcmds:
+        # Find table name
+        table = cmd.split("TABLE ")[1].split("(")[0]
         for n in nodes:
             threads.append(NodeThread(n, cmd, ddlfile).start())
+
+    # for t in threads:
+    #     t.join()
+
+    for n in nodes:
+        catalog.updateCatalog(table, n)
+    print("[", catalog.hostname, "]: catalog updated.")
 
     k.close()
 
@@ -103,26 +111,35 @@ class Catalog:
         self.db = db.replace(" ", "")
     def displayCatalog(self):
         print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db)
-    def createCatalog(self):
+    def updateCatalog(self, table, n):
         try:
-            createCMD = "create table dtables(tname VARCHAR(32), nodedriver VARCHAR(64), nodeurl VARCHAR(128), nodeuser VARCHAR(16), nodepasswd VARCHAR(16), partmtd INT, nodeid INT, partcol VARCHAR(32), partparam1 VARCHAR(32), partparam2 VARCHAR(32))"
             connect = pymysql.connect(self.hostname, self.username, self.passwd, self.db)
             cur = connect.cursor()
-            cur.execute(createCMD)
+            cur.execute("""INSERT INTO dtables VALUES (%s, NULL, %s, %s, %s, NULL, %s, NULL, NULL, NULL)""", (table, n.url, n.username, n.passwd, n.num))
+            connect.commit()
+            connect.close()
         except pymysql.InternalError:
-            # Table Exists so it Errors
-            print("Catalog already exists")
+            print("Error")
+    def createCatalog(self):
+        try:
+            connect = pymysql.connect(self.hostname, self.username, self.passwd, self.db)
+            cur = connect.cursor()
+            cur.execute("""CREATE TABLE dtables (tname VARCHAR(32), nodedriver VARCHAR(64), nodeurl VARCHAR(128), nodeuser VARCHAR(16), nodepasswd VARCHAR(16), partmtd INT, nodeid INT, partcol VARCHAR(32), partparam1 VARCHAR(32), partparam2 VARCHAR(32))""")
+            connect.close()
+        except pymysql.InternalError:
+            pass
 
 class Node:
     'Base Class for Nodes'
-    def __init__(self, hostname, username, passwd, db, num):
+    def __init__(self, hostname, username, passwd, db, num, url, port):
         self.hostname = hostname.replace(" ", "")
         self.username = username.replace(" ", "")
         self.passwd = passwd.replace(" ", "")
         self.db = db.replace(" ", "")
         self.num = num
-        self.displayNode()
+        self.url = url.replace(" ", "")
+        self.port = port.replace(" ", "")
     def displayNode(self):
-        print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db, "Num: ", self.num)
+        print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db, " Num: ", self.num, " Url: ", self.url, " Port: ", self.port)
 
 runDDL(argv)
