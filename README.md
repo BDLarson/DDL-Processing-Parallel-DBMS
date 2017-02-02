@@ -50,6 +50,9 @@ $ vagrant init ubuntu/xenial64<br />
 $ vagrant up<br />
 $ vagrant ssh<br />
 
+Change to the /vagrant directory of each virtual machine<br />
+$ cd /vagrant<br />
+
 Open Vagrantfile in Each Directory:<br />
 Replace line 25 with:<br />
   config.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true<br />
@@ -61,7 +64,6 @@ Note: ADDRESS_VALUE depends on Directory:<br />
   /catalogbox, address_value = localhost_network.30<br />
 
 Install MySQL in Each Directory:<br />
-$ cd /vagrant<br />
 $ sudo apt-get install mysql-server<br />
 Note: Password for MySQL-server: password<br />
 $ /usr/bin/mysql_secure_installation<br />
