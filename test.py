@@ -83,11 +83,11 @@ def runCommands(node, cmd, ddlfile):
         cur = connect.cursor()
         cur.execute(cmd)
         connect.close()
-        print("[", node.url, "]: ./", ddlfile, " success.")
+        print("[", node.url, "]:", ddlfile, " success.")
     except pymysql.InternalError:
-        print("[", node.url, "]: ./", ddlfile, " failed.")
+        print("[", node.url, "]:", ddlfile, " failed.")
     except pymysql.OperationalError:
-        print("[", node.url, "]: ./", ddlfile, " failed to connect to server.")
+        print("[", node.url, "]:", ddlfile, " failed to connect to server.")
 
 class NodeThread(threading.Thread):
     def __init__(self, node, cmd, ddlfile):
