@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import pymysql
 import threading
-import time
 import sys
 from sys import argv
 
@@ -40,7 +39,7 @@ def runDDL(argv):
                         username = temp[1]
                     elif temp[0].split(".")[1].find("passwd") > -1:
                         passwd = temp[1]
-                        catalog = Catalog(hostname, username, passwd, db)
+                        catalog = Catalog(hostname, username, passwd, db, url)
                         catalog.createCatalog()
                 elif temp[0].split(".")[0].find("numnodes") > -1:
                     pass
@@ -72,12 +71,9 @@ def runDDL(argv):
         for n in nodes:
             threads.append(NodeThread(n, cmd, ddlfile).start())
 
-    # for t in threads:
-    #     t.join()
-
     for n in nodes:
         catalog.updateCatalog(table, n)
-    print("[", catalog.hostname, "]: catalog updated.")
+    print("[", catalog.url, "]: catalog updated.")
 
     k.close()
 
@@ -87,11 +83,11 @@ def runCommands(node, cmd, ddlfile):
         cur = connect.cursor()
         cur.execute(cmd)
         connect.close()
-        print("[", node.hostname, "]: ./", ddlfile, " success.")
+        print("[", node.url, "]: ./", ddlfile, " success.")
     except pymysql.InternalError:
-        print("[", node.hostname, "]: ./", ddlfile, " failed.")
+        print("[", node.url, "]: ./", ddlfile, " failed.")
     except pymysql.OperationalError:
-        print("[", node.hostname, "]: ./", ddlfile, " failed to connect to server.")
+        print("[", node.url, "]: ./", ddlfile, " failed to connect to server.")
 
 class NodeThread(threading.Thread):
     def __init__(self, node, cmd, ddlfile):
@@ -104,11 +100,12 @@ class NodeThread(threading.Thread):
 
 class Catalog:
     'Base Class for Catalog'
-    def __init__(self, hostname, username, passwd, db):
+    def __init__(self, hostname, username, passwd, db, url):
         self.hostname = hostname.replace(" ", "")
         self.username = username.replace(" ", "")
         self.passwd = passwd.replace(" ", "")
         self.db = db.replace(" ", "")
+        self.url = url
     def displayCatalog(self):
         print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db)
     def updateCatalog(self, table, n):
