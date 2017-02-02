@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import pymysql
-import _thread
+import threading
+import time
 import sys
 from sys import argv
 
@@ -12,6 +13,7 @@ def runDDL(argv):
     url = ""
     port = ""
     db = ""
+    num = 0
 
     # List of Nodes
     nodes = []
@@ -40,6 +42,7 @@ def runDDL(argv):
                     elif temp[0].split(".")[1].find("passwd") > -1:
                         passwd = temp[1]
                         catalog = Catalog(hostname, username, passwd, db)
+                        catalog.createCatalog()
                 elif temp[0].split(".")[0].find("numnodes") > -1:
                     pass
                 elif temp[0].split(".")[0].find("node") > -1:
@@ -54,41 +57,42 @@ def runDDL(argv):
                     elif temp[0].split(".")[1].find("username") > -1:
                         username = temp[1]
                     elif temp[0].split(".")[1].find("passwd") > -1:
+                        num = num + 1
                         passwd = temp[1]
-                        nodes.append(Node(hostname, username, passwd, db))
-
+                        nodes.append(Node(hostname, username, passwd, db, num))
 
     # Reads ddlfile, Remove Whitespace, Remove new lines, Parse contents on ';'
     k = open(ddlfile, "r")
     sqlcmds = list(filter(None, k.read().strip().replace("\n","").split(';')))
 
-    # Create catalog
-    try:
-        catalog.createCatalog()
-    except pymysql.InternalError:
-        # Table Exists so it Errors
-        print("Catalog already exists")
-
-    # Running Commands from ddlfile
+    # Run Commands from ddlfile on each Thread
+    threads = []
     for cmd in sqlcmds:
         for n in nodes:
-            try:
-                connect = pymysql.connect(n.hostname, n.username, n.passwd, n.db)
-                cur = connect.cursor()
-                cur.execute(cmd)
-                connect.close()
-                print("[", n.hostname, "]: ./", ddlfile, " success.")
-            except pymysql.InternalError:
-                print("[", n.hostname, "]: ./", ddlfile, " failed.")
+            threads.append(NodeThread(n, cmd, ddlfile).start())
 
     k.close()
 
-    # # Print Catalog Info
-    # catalog.displayCatalog()
-    #
-    # # Print Node Info
-    # for cl in nodes:
-    #     cl.displayNode()
+def runCommands(node, cmd, ddlfile):
+    try:
+        connect = pymysql.connect(node.hostname, node.username, node.passwd, node.db)
+        cur = connect.cursor()
+        cur.execute(cmd)
+        connect.close()
+        print("[", node.hostname, "]: ./", ddlfile, " success.")
+    except pymysql.InternalError:
+        print("[", node.hostname, "]: ./", ddlfile, " failed.")
+    except pymysql.OperationalError:
+        print("[", node.hostname, "]: ./", ddlfile, " failed to connect to server.")
+
+class NodeThread(threading.Thread):
+    def __init__(self, node, cmd, ddlfile):
+        threading.Thread.__init__(self)
+        self.node = node
+        self.cmd = cmd
+        self.ddlfile = ddlfile
+    def run(self):
+        runCommands(self.node, self.cmd, self.ddlfile)
 
 class Catalog:
     'Base Class for Catalog'
@@ -100,19 +104,25 @@ class Catalog:
     def displayCatalog(self):
         print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db)
     def createCatalog(self):
-        createCMD = "create table dtables(tname VARCHAR(32), nodedriver VARCHAR(64), nodeurl VARCHAR(128), nodeuser VARCHAR(16), nodepasswd VARCHAR(16), partmtd INT, nodeid INT, partcol VARCHAR(32), partparam1 VARCHAR(32), partparam2 VARCHAR(32))"
-        connect = pymysql.connect(self.hostname, self.username, self.passwd, self.db)
-        cur = connect.cursor()
-        cur.execute(createCMD)
+        try:
+            createCMD = "create table dtables(tname VARCHAR(32), nodedriver VARCHAR(64), nodeurl VARCHAR(128), nodeuser VARCHAR(16), nodepasswd VARCHAR(16), partmtd INT, nodeid INT, partcol VARCHAR(32), partparam1 VARCHAR(32), partparam2 VARCHAR(32))"
+            connect = pymysql.connect(self.hostname, self.username, self.passwd, self.db)
+            cur = connect.cursor()
+            cur.execute(createCMD)
+        except pymysql.InternalError:
+            # Table Exists so it Errors
+            print("Catalog already exists")
 
 class Node:
     'Base Class for Nodes'
-    def __init__(self, hostname, username, passwd, db):
+    def __init__(self, hostname, username, passwd, db, num):
         self.hostname = hostname.replace(" ", "")
         self.username = username.replace(" ", "")
         self.passwd = passwd.replace(" ", "")
         self.db = db.replace(" ", "")
+        self.num = num
+        self.displayNode()
     def displayNode(self):
-        print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db)
+        print("Hostname: ", self.hostname, " Username: ", self.username, " Passwd: ", self.passwd, " DB: ", self.db, "Num: ", self.num)
 
 runDDL(argv)
