@@ -39,6 +39,12 @@ $ mkdir catalog<br />
 $ mkdir node1<br />
 $ mkdir node2<br />
 
+Install all necessary files from the repo:<br />
+1) test.py<br />
+2) c.cfg<br />
+3) d.sql<br />
+4) run.sh<br />
+
 Initialize a virtual machine in each directory:<br />
 $ vagrant init ubuntu/xenial64<br />
 $ vagrant up<br />
