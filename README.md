@@ -79,4 +79,4 @@ mysql> exit<br />
 $ exit<br />
 
 Run the DDL from your local host repo:<br />
-$ python3 test.py c.txt d.txt<br />
+$ python3 test.py c.cfg d.sql<br />
