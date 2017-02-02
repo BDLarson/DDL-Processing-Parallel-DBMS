@@ -86,3 +86,8 @@ Create Remote Users in Each Directory:<br />
 mysql> use TESTDB;<br />
 mysql> create user 'username';<br />
 mysql> grant all on TESTDB.* to username@'%' identified by 'password';<br />
+mysql> exit
+$ exit
+
+Run the DDL from your local host repo:
+$ python3 test.py c.txt d.txt
