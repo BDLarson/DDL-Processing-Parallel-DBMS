@@ -44,17 +44,6 @@ $ vagrant init ubuntu/xenial64<br />
 $ vagrant up<br />
 $ vagrant ssh<br />
 
-Change directory to /vagrant in each directory:<br />
-$ cd /vagrant<br />
-
-Install MySQL in each directory:<br />
-$ sudo apt-get install mysql-server<br />
-NOTE: Password for MySQL-server: password<br />
-
-Edit the MySQL settings in each directory:<br />
-$ /usr/bin/mysql_secure_installation<br />
-NOTE: Respond No to everything but Remove test database and access to it, and Reload privilege tables<br />
-
 Open Vagrantfile in Each Directory:<br />
 Replace line 25 with:<br />
   config.vm.network "forwarded_port", guest: 3306, host: 3306, auto_correct: true<br />
